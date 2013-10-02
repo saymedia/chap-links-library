@@ -893,10 +893,10 @@ links.Timeline.prototype.repaintFrame = function() {
             params.onTouchStart = function (event) {me.onTouchStart(event);};
             links.Timeline.addEventListener(dom.content, "touchstart", params.onTouchStart);
         }
-        if (!params.onMouseWheel) {
-            params.onMouseWheel = function (event) {me.onMouseWheel(event);};
-            links.Timeline.addEventListener(dom.content, "mousewheel", params.onMouseWheel);
-        }
+        // if (!params.onMouseWheel) {
+        //     params.onMouseWheel = function (event) {me.onMouseWheel(event);};
+        //     links.Timeline.addEventListener(dom.content, "mousewheel", params.onMouseWheel);
+        // }
         if (!params.onDblClick) {
             params.onDblClick = function (event) {me.onDblClick(event);};
             links.Timeline.addEventListener(dom.content, "dblclick", params.onDblClick);
