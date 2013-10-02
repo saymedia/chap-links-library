@@ -5917,13 +5917,40 @@ links.Timeline.StepDate.prototype.getLabelMinor = function(options, date) {
         date = this.current;
     }
 
+    var self = this;
+    function _ampm(d) {
+        var h = d.getHours();
+        var sfx;
+        if (h >= 12) {
+            if (h > 12) {
+                h = h - 12;
+            }
+            sfx = ' PM';
+        }
+        else {
+            sfx = ' AM';
+            if (h === 0) {
+                h = 12;
+            }
+        }
+
+        var m = d.getMinutes();
+        if (m === 0) {
+            m = '';
+        }
+        else {
+            m = ':' + self.addZeros(m, 2);
+        }
+        return h + m + sfx;
+    };
+
     switch (this.scale) {
         case links.Timeline.StepDate.SCALE.MILLISECOND:  return String(date.getMilliseconds());
         case links.Timeline.StepDate.SCALE.SECOND:       return String(date.getSeconds());
         case links.Timeline.StepDate.SCALE.MINUTE:
-            return this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
+            return _ampm(date); //this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
         case links.Timeline.StepDate.SCALE.HOUR:
-            return this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
+            return _ampm(date); //this.addZeros(date.getHours(), 2) + ":" + this.addZeros(date.getMinutes(), 2);
         case links.Timeline.StepDate.SCALE.WEEKDAY:      return options.DAYS_SHORT[date.getDay()] + ' ' + date.getDate();
         case links.Timeline.StepDate.SCALE.DAY:          return String(date.getDate());
         case links.Timeline.StepDate.SCALE.MONTH:        return options.MONTHS_SHORT[date.getMonth()];   // month is zero based
@@ -5945,16 +5972,44 @@ links.Timeline.StepDate.prototype.getLabelMajor = function(options, date) {
         date = this.current;
     }
 
+    var self = this;
+    function _ampm(d) {
+        var h = d.getHours();
+        var sfx;
+        if (h >= 12) {
+            if (h > 12) {
+                h = h - 12;
+            }
+            sfx = ' PM';
+        }
+        else {
+            sfx = ' AM';
+            if (h === 0) {
+                h = 12;
+            }
+        }
+
+        var m = d.getMinutes();
+        if (m === 0) {
+            m = '';
+        }
+        else {
+            m = ':' + self.addZeros(m, 2);
+        }
+        return h + m + sfx;
+    };
+
     switch (this.scale) {
         case links.Timeline.StepDate.SCALE.MILLISECOND:
-            return  this.addZeros(date.getHours(), 2) + ":" +
+            return this.addZeros(date.getHours(), 2) + ":" +
                 this.addZeros(date.getMinutes(), 2) + ":" +
                 this.addZeros(date.getSeconds(), 2);
         case links.Timeline.StepDate.SCALE.SECOND:
             return  date.getDate() + " " +
                 options.MONTHS[date.getMonth()] + " " +
-                this.addZeros(date.getHours(), 2) + ":" +
-                this.addZeros(date.getMinutes(), 2);
+                _ampm(date);
+                //this.addZeros(date.getHours(), 2) + ":" +
+                //this.addZeros(date.getMinutes(), 2);
         case links.Timeline.StepDate.SCALE.MINUTE:
             return  options.DAYS[date.getDay()] + " " +
                 date.getDate() + " " +
