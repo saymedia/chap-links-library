@@ -2189,6 +2189,7 @@ links.Timeline.prototype.repaintNavigation = function () {
                 navBar.style.top = '10px';
             }
             dom.navBar = navBar;
+            navBar.style.zIndex = 1002;
             frame.appendChild(navBar);
         }
 
@@ -4572,17 +4573,18 @@ links.Timeline.prototype.getGroup = function (groupName) {
         groupObj = {
             'content': groupName,
             'labelTop': 0,
-            'lineTop': 0
+            'lineTop': 0,
+            'order': groups.length
             // note: this object will lateron get addition information, 
             //       such as height and width of the group         
         };
         groups.push(groupObj);
         // sort the groups
         groups = groups.sort(function (a, b) {
-            if (a.content > b.content) {
+            if (a.order > b.order) {
                 return 1;
             }
-            if (a.content < b.content) {
+            if (a.order < b.order) {
                 return -1;
             }
             return 0;
