@@ -2049,11 +2049,22 @@ links.Timeline.prototype.repaintDeleteButton = function () {
     if (!deleteButton) {
         // create a delete button
         deleteButton = document.createElement("DIV");
-        deleteButton.className = "timeline-navigation-delete";
+        deleteButton.className = "timeline-navigation-delete icon-remove";
         deleteButton.style.position = "absolute";
 
         frame.appendChild(deleteButton);
         dom.items.deleteButton = deleteButton;
+    }
+
+    var editButton = dom.items.editButton;
+    if (!editButton) {
+        // create a delete button
+        editButton = document.createElement("DIV");
+        editButton.className = "timeline-navigation-edit icon-edit-sign";
+        editButton.style.position = "absolute";
+
+        frame.appendChild(editButton);
+        dom.items.editButton = editButton;
     }
 
     var index = this.selection ? this.selection.index : -1,
@@ -2062,14 +2073,23 @@ links.Timeline.prototype.repaintDeleteButton = function () {
         var right = item.getRight(this),
             top = item.top;
 
-        deleteButton.style.left = right + 'px';
-        deleteButton.style.top = top + 'px';
+        deleteButton.style.left = (right - 19) + 'px'; // height/width is 16px
+        deleteButton.style.top = (top + 3) + 'px';
+        deleteButton.style.zIndex = 1001;
         deleteButton.style.display = '';
         frame.removeChild(deleteButton);
         frame.appendChild(deleteButton);
+
+        editButton.style.left = (right - 19) + 'px'; // height/width is 16px
+        editButton.style.top = (top + 16 + 6) + 'px';
+        editButton.style.zIndex = 1001;
+        editButton.style.display = '';
+        frame.removeChild(editButton);
+        frame.appendChild(editButton);
     }
     else {
         deleteButton.style.display = 'none';
+        editButton.style.display = 'none';
     }
 };
 
@@ -2952,6 +2972,19 @@ links.Timeline.prototype.onMouseUp = function (event) {
                 // delete item
                 if (this.selection) {
                     this.confirmDeleteItem(this.selection.index);
+                }
+            }
+            else if (params.target === this.dom.items.editButton) {
+                // edit item
+                if (this.selection) {
+                    if (!this.isSelected(this.selection.index)) {
+                        this.selectItem(this.selection.index);
+                    }
+                    var item = this.items[this.selection.index];
+                    if (item && this.isEditable(item)) {
+                        params.itemIndex = this.selection.index;
+                        this.trigger('edit');
+                    }
                 }
             }
             else if (options.selectable) {

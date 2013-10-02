@@ -137,7 +137,7 @@ div.timeline-navigation {
     -moz-border-radius: 2px;  /* For Firefox 3.6 and older */
 }
 
-div.timeline-navigation-new, div.timeline-navigation-delete,
+div.timeline-navigation-new, div.timeline-navigation-delete, div.timeline-navigation-edit,
 div.timeline-navigation-zoom-in,  div.timeline-navigation-zoom-out,
 div.timeline-navigation-move-left, div.timeline-navigation-move-right {
     cursor: pointer;
@@ -158,10 +158,10 @@ div.timeline-navigation-new-line {
     border-right: solid 1px;
 }
 
-div.timeline-navigation-delete {
+div.timeline-navigation-delete, div.timeline-navigation-edit {
     padding: 0px;
     padding-left: 5px;
-    background: url('img/16/delete.png') no-repeat center;
+    /*background: url('img/16/delete.png') no-repeat center;*/
 }
 
 div.timeline-navigation-zoom-in {
