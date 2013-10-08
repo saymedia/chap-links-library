@@ -2695,7 +2695,7 @@ links.Timeline.prototype.onMouseDown = function(event) {
         params.itemRight = item.end ? this.timeToScreen(item.end) : undefined;
     }
     else {
-        this.dom.frame.style.cursor = 'move';
+        $(this.dom.frame).addClass('moving');
     }
     if (!params.touchDown) {
         // add event listeners to handle moving the contents
@@ -2886,7 +2886,7 @@ links.Timeline.prototype.onMouseUp = function (event) {
 
     event = event || window.event;
 
-    this.dom.frame.style.cursor = 'auto';
+    $(this.dom.frame).removeClass('moving');
 
     // remove event listeners here, important for Safari
     if (params.onMouseMove) {

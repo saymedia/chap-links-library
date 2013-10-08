@@ -2,6 +2,9 @@ div.timeline-frame {
     border: 1px solid #BEBEBE;
     overflow: hidden;
 }
+div.timeline-frame.moving {
+    cursor: move;
+}
 
 div.timeline-axis {
     border-color: #BEBEBE;
