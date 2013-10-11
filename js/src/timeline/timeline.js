@@ -1818,7 +1818,14 @@ links.Timeline.prototype.repaintGroups = function() {
     for (var i = 0, iMax = Math.min(current, needed); i < iMax; i++) {
         var group = groups[i];
         var label = labels[i];
-        label.innerHTML = this.getGroupName(group);
+        var content = this.getGroupName(group);
+        if (content.nodeType && content.nodeType === 1) {
+            label.innerHTML = '';
+            label.appendChild(content);
+        }
+        else {
+            label.innerHTML = content;
+        }
         label.style.display = '';
     }
 
@@ -1833,7 +1840,14 @@ links.Timeline.prototype.repaintGroups = function() {
         if (options.groupsWidth === undefined) {
             label.style.whiteSpace = "nowrap";
         }
-        label.innerHTML = this.getGroupName(group);
+        var content = this.getGroupName(group);
+        if (content.nodeType && content.nodeType === 1) {
+            label.innerHTML = '';
+            label.appendChild(content);
+        }
+        else {
+            label.innerHTML = content;
+        }
         frame.appendChild(label);
         labels[i] = label;
 
@@ -3718,7 +3732,12 @@ links.Timeline.ItemBox.prototype.createDOM = function () {
     // contents box (inside the background box). used for making margins
     var divContent = document.createElement("DIV");
     divContent.className = "timeline-event-content";
-    divContent.innerHTML = this.content;
+    if (this.content.nodeType && this.content.nodeType === 1) {
+        divContent.appendChild(this.content);
+    }
+    else {
+        divContent.innerHTML = this.content;
+    }
     divBox.appendChild(divContent);
 
     // line to axis
@@ -3803,7 +3822,13 @@ links.Timeline.ItemBox.prototype.updateDOM = function () {
         var divDot = divBox.dot;
 
         // update contents
-        divBox.firstChild.innerHTML = this.content;
+        if (this.content.nodeType && this.content.nodeType === 1) {
+            divBox.firstChild.innerHTML = '';
+            divBox.firstChild.appendChild(this.content);
+        }
+        else {
+            divBox.firstChild.innerHTML = this.content;
+        }
 
         // update class
         divBox.className = "timeline-event timeline-event-box ui-widget ui-state-default";
@@ -4034,7 +4059,13 @@ links.Timeline.ItemRange.prototype.updateDOM = function () {
     var divBox = this.dom;
     if (divBox) {
         // update contents
-        divBox.firstChild.innerHTML = this.content;
+        if (this.content.nodeType && this.content.nodeType === 1) {
+            divBox.firstChild.innerHTML = '';
+            divBox.firstChild.appendChild(this.content);
+        }
+        else {
+            divBox.firstChild.innerHTML = this.content;
+        }
 
         // update class
         divBox.className = "timeline-event timeline-event-range ui-widget ui-state-default";
@@ -4272,7 +4303,13 @@ links.Timeline.ItemDot.prototype.updateDOM = function () {
         var divDot = divBox.dot;
 
         // update contents
-        divBox.firstChild.innerHTML = this.content;
+        if (this.content.nodeType && this.content.nodeType === 1) {
+            divBox.firstChild.innerHTML = '';
+            divBox.firstChild.appendChild(this.content);
+        }
+        else {
+            divBox.firstChild.innerHTML = this.content;
+        }
 
         // update classes
         divBox.className = "timeline-event-dot-container";
