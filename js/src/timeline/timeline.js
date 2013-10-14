@@ -441,7 +441,6 @@ links.Timeline.prototype.setData = function(data) {
         for (var row = 0, rows = data.length; row < rows; row++) {
             var itemData = data[row];
             var item = this.createItem(itemData);
-            console.log('created item from itemData', item, itemData);
             items.push(item);
         }
     }
@@ -2955,7 +2954,6 @@ links.Timeline.prototype.onMouseUp = function (event) {
                     item.start = params.itemStart;
                     item.end = params.itemEnd;
                     item.group = this.getGroup(params.itemGroupId);
-console.log('restoring group to', params.itemGroupId);
                     // TODO: original group should be restored too
                     item.setPosition(params.itemLeft, params.itemRight);
                 }
