@@ -425,13 +425,14 @@ links.Timeline.prototype.setData = function(data) {
         // read DataTable
         for (var row = 0, rows = data.getNumberOfRows(); row < rows; row++) {
             items.push(this.createItem({
-                'start':     ((cols.start != undefined)     ? data.getValue(row, cols.start)     : undefined),
-                'end':       ((cols.end != undefined)       ? data.getValue(row, cols.end)       : undefined),
-                'content':   ((cols.content != undefined)   ? data.getValue(row, cols.content)   : undefined),
-                'group':     ((cols.group != undefined)     ? data.getValue(row, cols.group)     : undefined),
-                'className': ((cols.className != undefined) ? data.getValue(row, cols.className) : undefined),
-                'editable':  ((cols.editable != undefined)  ? data.getValue(row, cols.editable)  : undefined),
-                'type':      ((cols.editable != undefined)  ? data.getValue(row, cols.type)      : undefined)
+                'start':      ((cols.start != undefined)      ? data.getValue(row, cols.start)      : undefined),
+                'end':        ((cols.end != undefined)        ? data.getValue(row, cols.end)        : undefined),
+                'content':    ((cols.content != undefined)    ? data.getValue(row, cols.content)    : undefined),
+                'groupId':    ((cols.groupId != undefined)    ? data.getValue(row, cols.groupId)    : undefined),
+                'groupLabel': ((cols.groupLabel != undefined) ? data.getValue(row, cols.groupLabel) : undefined),
+                'className':  ((cols.className != undefined)  ? data.getValue(row, cols.className)  : undefined),
+                'editable':   ((cols.editable != undefined)   ? data.getValue(row, cols.editable)   : undefined),
+                'type':       ((cols.editable != undefined)   ? data.getValue(row, cols.type)       : undefined)
             }));
         }
     }
@@ -440,6 +441,7 @@ links.Timeline.prototype.setData = function(data) {
         for (var row = 0, rows = data.length; row < rows; row++) {
             var itemData = data[row];
             var item = this.createItem(itemData);
+            console.log('created item from itemData', item, itemData);
             items.push(item);
         }
     }
@@ -451,6 +453,8 @@ links.Timeline.prototype.setData = function(data) {
     if (this.options.cluster) {
         this.clusterGenerator.setData(this.items);
     }
+
+    this.sortGroups();
 
     this.render({
         animate: false
@@ -1813,19 +1817,11 @@ links.Timeline.prototype.repaintGroups = function() {
     // create the items
     var current = labels.length,
         needed = groups.length;
-
     // overwrite existing group labels
     for (var i = 0, iMax = Math.min(current, needed); i < iMax; i++) {
         var group = groups[i];
         var label = labels[i];
-        var content = this.getGroupName(group);
-        if (content.nodeType && content.nodeType === 1) {
-            label.innerHTML = '';
-            label.appendChild(content);
-        }
-        else {
-            label.innerHTML = content;
-        }
+        label.innerHTML = this.getGroupLabel(group);
         label.style.display = '';
     }
 
@@ -1840,14 +1836,7 @@ links.Timeline.prototype.repaintGroups = function() {
         if (options.groupsWidth === undefined) {
             label.style.whiteSpace = "nowrap";
         }
-        var content = this.getGroupName(group);
-        if (content.nodeType && content.nodeType === 1) {
-            label.innerHTML = '';
-            label.appendChild(content);
-        }
-        else {
-            label.innerHTML = content;
-        }
+        label.innerHTML = this.getGroupLabel(group);
         frame.appendChild(label);
         labels[i] = label;
 
@@ -2231,13 +2220,13 @@ links.Timeline.prototype.repaintNavigation = function () {
                 }
 
                 var content = options.NEW;
-                var group = timeline.groups.length ? timeline.groups[0].content : undefined;
+                var group = timeline.groups.length ? timeline.groups[0].id : undefined;
                 var preventRender = true;
                 timeline.addItem({
                     'start': xstart,
                     'end': xend,
                     'content': content,
-                    'group': group
+                    'groupId': group
                 }, preventRender);
                 var index = (timeline.items.length - 1);
                 timeline.selectItem(index);
@@ -2691,7 +2680,7 @@ links.Timeline.prototype.onMouseDown = function(event) {
             'start': xstart,
             'end': xend,
             'content': content,
-            'group': this.getGroupName(group)
+            'groupId': group.id
         });
         params.itemIndex = (this.items.length - 1);
         this.selectItem(params.itemIndex);
@@ -2704,7 +2693,7 @@ links.Timeline.prototype.onMouseDown = function(event) {
     if (params.editItem) {
         params.itemStart = item.start;
         params.itemEnd = item.end;
-        params.itemGroup = item.group;
+        params.itemGroupId = item.group.id;
         params.itemLeft = item.start ? this.timeToScreen(item.start) : undefined;
         params.itemRight = item.end ? this.timeToScreen(item.end) : undefined;
     }
@@ -2758,7 +2747,7 @@ links.Timeline.prototype.onMouseMove = function (event) {
     var diffY = mouseY - params.mouseY;
 
     // if mouse movement is big enough, register it as a "moved" event
-    if (Math.abs(diffX) >= 1) {
+    if ((Math.abs(diffX) >= 1) || (Math.abs(diffY) >= 1)) {
         params.moved = true;
     }
 
@@ -2833,7 +2822,7 @@ links.Timeline.prototype.onMouseMove = function (event) {
             if (options.groupsChangeable && item.group !== group) {
                 // move item to the other group
                 var index = this.items.indexOf(item);
-                this.changeItem(index, {'group': this.getGroupName(group)});
+                this.changeItem(index, {'groupId': group.id});
             }
             else {
                 this.repaintDeleteButton();
@@ -2940,7 +2929,7 @@ links.Timeline.prototype.onMouseUp = function (event) {
                         'start': item.start,
                         'end': item.end,
                         'content': item.content,
-                        'group': this.getGroupName(item.group)
+                        'groupId': item.group.id
                     });
                 }
                 else {
@@ -2965,7 +2954,8 @@ links.Timeline.prototype.onMouseUp = function (event) {
 
                     item.start = params.itemStart;
                     item.end = params.itemEnd;
-                    item.group = params.itemGroup;
+                    item.group = this.getGroup(params.itemGroupId);
+console.log('restoring group to', params.itemGroupId);
                     // TODO: original group should be restored too
                     item.setPosition(params.itemLeft, params.itemRight);
                 }
@@ -3074,7 +3064,7 @@ links.Timeline.prototype.onDblClick = function (event) {
                 'start': xstart,
                 'end': xend,
                 'content': content,
-                'group': this.getGroupName(group)
+                'groupId': group.id
             }, preventRender);
             params.itemIndex = (this.items.length - 1);
             this.selectItem(params.itemIndex);
@@ -4419,10 +4409,10 @@ links.Timeline.prototype.getItem = function (index) {
     }
     properties.content = item.content;
     if (item.group) {
-        properties.group = this.getGroupName(item.group);
+        properties.groupId = item.group.id;
     }
     if ('className' in item) {
-        properties.className = this.getGroupName(item.className);
+        properties.className = item.className;
     }
     if (item.hasOwnProperty('editable') && (typeof item.editable != 'undefined')) {
         properties.editable = item.editable;
@@ -4508,10 +4498,13 @@ links.Timeline.prototype.createItem = function(itemData) {
         content: itemData.content,
         className: itemData.className,
         editable: itemData.editable,
-        group: this.getGroup(itemData.group),
+        group: this.getGroup(itemData.groupId),
         type: type
     };
     // TODO: optimize this, when creating an item, all data is copied twice...
+    if (itemData.groupLabel) {
+        data.group.label = itemData.groupLabel;
+    }
 
     // TODO: is initialTop needed?
     var initialTop,
@@ -4549,15 +4542,17 @@ links.Timeline.prototype.changeItem = function (index, itemData, preventRender) 
         throw "Cannot change item, index out of range";
     }
 
+    var oldGroup = oldItem.group ? oldItem.group : undefined;
     // replace item, merge the changes
     var newItem = this.createItem({
-        'start':     itemData.hasOwnProperty('start') ?     itemData.start :     oldItem.start,
-        'end':       itemData.hasOwnProperty('end') ?       itemData.end :       oldItem.end,
-        'content':   itemData.hasOwnProperty('content') ?   itemData.content :   oldItem.content,
-        'group':     itemData.hasOwnProperty('group') ?     itemData.group :     this.getGroupName(oldItem.group),
-        'className': itemData.hasOwnProperty('className') ? itemData.className : oldItem.className,
-        'editable':  itemData.hasOwnProperty('editable') ?  itemData.editable :  oldItem.editable,
-        'type':      itemData.hasOwnProperty('type') ?      itemData.type :      oldItem.type
+        'start':      itemData.hasOwnProperty('start') ?      itemData.start :      oldItem.start,
+        'end':        itemData.hasOwnProperty('end') ?        itemData.end :        oldItem.end,
+        'content':    itemData.hasOwnProperty('content') ?    itemData.content :    oldItem.content,
+        'groupId':    itemData.hasOwnProperty('groupId') ?    itemData.groupId :    oldGroup.id,
+        'groupLabel': itemData.hasOwnProperty('groupLabel') ? itemData.groupLabel : oldGroup ? oldGroup.label : undefined,
+        'className':  itemData.hasOwnProperty('className') ?  itemData.className :  oldItem.className,
+        'editable':   itemData.hasOwnProperty('editable') ?   itemData.editable :   oldItem.editable,
+        'type':       itemData.hasOwnProperty('type') ?       itemData.type :       oldItem.type
     });
     this.items[index] = newItem;
 
@@ -4597,18 +4592,19 @@ links.Timeline.prototype.deleteGroups = function () {
 /**
  * Get a group by the group name. When the group does not exist,
  * it will be created.
- * @param {String} groupName   the name of the group
+ * @param {String} groupId   the id of the group
  * @return {Object} groupObject
  */
-links.Timeline.prototype.getGroup = function (groupName) {
+links.Timeline.prototype.getGroup = function (groupId) {
     var groups = this.groups,
         groupIndexes = this.groupIndexes,
         groupObj = undefined;
 
-    var groupIndex = groupIndexes[groupName];
-    if (groupIndex == undefined && groupName != undefined) { // not null or undefined
+    var groupIndex = groupIndexes[groupId];
+    if (groupIndex == undefined && groupId != undefined) { // not null or undefined
         groupObj = {
-            'content': groupName,
+            'id': groupId,
+            'label': groupId,
             'labelTop': 0,
             'lineTop': 0,
             'order': groups.length
@@ -4616,21 +4612,7 @@ links.Timeline.prototype.getGroup = function (groupName) {
             //       such as height and width of the group         
         };
         groups.push(groupObj);
-        // sort the groups
-        groups = groups.sort(function (a, b) {
-            if (a.order > b.order) {
-                return 1;
-            }
-            if (a.order < b.order) {
-                return -1;
-            }
-            return 0;
-        });
-
-        // rebuilt the groupIndexes
-        for (var i = 0, iMax = groups.length; i < iMax; i++) {
-            groupIndexes[groups[i].content] = i;
-        }
+        this.sortGroups();
     }
     else {
         groupObj = groups[groupIndex];
@@ -4640,13 +4622,39 @@ links.Timeline.prototype.getGroup = function (groupName) {
 };
 
 /**
- * Get the group name from a group object.
+ * Sort the groups array.
+ * @param {Function} sortFunction   Optional sort function.
+ *
+ */
+links.Timeline.prototype.sortGroups = function (fn) {
+    // sort the groups
+    var groups = this.groups,
+        groupIndexes = this.groupIndexes;
+
+    var byLabel = function (a, b) {
+        if (a.label > b.label) {
+            return 1;
+        }
+        if (a.label < b.label) {
+            return -1;
+        }
+        return 0;
+    };
+    groups = groups.sort(fn || byLabel);
+    // rebuild the groupIndexes
+    for (var i = 0, iMax = groups.length; i < iMax; i++) {
+        groupIndexes[groups[i].id] = i;
+    }
+};
+
+/**
+ * Get the group label from a group object.
  * @param {Object} groupObj
- * @return {String} groupName   the name of the group, or undefined when group
+ * @return {String} groupLabel  the name of the group, or undefined when group
  *                              was not provided
  */
-links.Timeline.prototype.getGroupName = function (groupObj) {
-    return groupObj ? groupObj.content : undefined;
+links.Timeline.prototype.getGroupLabel = function (groupObj) {
+    return groupObj ? groupObj.label : undefined;
 };
 
 /**
@@ -5268,7 +5276,7 @@ links.Timeline.ClusterGenerator.prototype.filterData = function () {
     // split the items per group
     items.forEach(function (item) {
         // put the item in the correct group
-        var groupName = item.group ? item.group.content : '';
+        var groupName = item.group ? item.group.label : '';
         var group = groups[groupName];
         if (!group) {
             group = [];
@@ -5414,14 +5422,14 @@ links.Timeline.ClusterGenerator.prototype.getClusters = function (scale) {
                         var title = 'Cluster containing ' + count +
                             ' events. Zoom in to see the individual events.';
                         var content = '<div title="' + title + '">' + count + ' events</div>';
-                        var group = item.group ? item.group.content : undefined;
+                        var group = item.group ? item.group.id : undefined;
                         if (containsRanges) {
                             // boxes and/or ranges
                             cluster = this.timeline.createItem({
                                 'start': new Date(min),
                                 'end': new Date(max),
                                 'content': content,
-                                'group': group
+                                'groupId': group
                             });
                         }
                         else {
@@ -5429,7 +5437,7 @@ links.Timeline.ClusterGenerator.prototype.getClusters = function (scale) {
                             cluster = this.timeline.createItem({
                                 'start': new Date(avg),
                                 'content': content,
-                                'group': group
+                                'groupId': group
                             });
                         }
                         cluster.isCluster = true;
