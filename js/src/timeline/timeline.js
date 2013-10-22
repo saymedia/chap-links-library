@@ -2051,7 +2051,7 @@ links.Timeline.prototype.repaintDeleteButton = function () {
     if (!deleteButton) {
         // create a delete button
         deleteButton = document.createElement("DIV");
-        deleteButton.className = "timeline-navigation-delete icon-remove";
+        deleteButton.className = "timeline-navigation-delete icon-trash";
         deleteButton.style.position = "absolute";
 
         frame.appendChild(deleteButton);
@@ -2062,7 +2062,7 @@ links.Timeline.prototype.repaintDeleteButton = function () {
     if (!editButton) {
         // create a delete button
         editButton = document.createElement("DIV");
-        editButton.className = "timeline-navigation-edit icon-edit-sign";
+        editButton.className = "timeline-navigation-edit icon-cog";
         editButton.style.position = "absolute";
 
         frame.appendChild(editButton);
@@ -2075,14 +2075,14 @@ links.Timeline.prototype.repaintDeleteButton = function () {
         var right = item.getRight(this),
             top = item.top;
 
-        deleteButton.style.left = (right - 19) + 'px'; // height/width is 16px
+        deleteButton.style.left = (right - 22) + 'px'; // height/width is 16px
         deleteButton.style.top = (top + 3) + 'px';
         deleteButton.style.zIndex = 1001;
         deleteButton.style.display = '';
         frame.removeChild(deleteButton);
         frame.appendChild(deleteButton);
 
-        editButton.style.left = (right - 19) + 'px'; // height/width is 16px
+        editButton.style.left = (right - 22) + 'px'; // height/width is 16px
         editButton.style.top = (top + 16 + 6) + 'px';
         editButton.style.zIndex = 1001;
         editButton.style.display = '';
@@ -2201,7 +2201,7 @@ links.Timeline.prototype.repaintNavigation = function () {
             navBar.addButton.className = "timeline-navigation-new";
             navBar.addButton.title = options.CREATE_NEW_EVENT;
             var addIconSpan = document.createElement("SPAN");
-            addIconSpan.className = "ui-icon ui-icon-circle-plus";            
+            addIconSpan.className = "ui-icon ui-icon-circle-plus";
             navBar.addButton.appendChild(addIconSpan);
             
             var onAdd = function(event) {
