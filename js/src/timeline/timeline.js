@@ -2679,7 +2679,8 @@ links.Timeline.prototype.onMouseDown = function(event) {
             'start': xstart,
             'end': xend,
             'content': content,
-            'groupId': group.id
+            'groupId': group.id,
+            'groupLabel': group.label
         });
         params.itemIndex = (this.items.length - 1);
         this.selectItem(params.itemIndex);
@@ -2821,7 +2822,7 @@ links.Timeline.prototype.onMouseMove = function (event) {
             if (options.groupsChangeable && item.group !== group) {
                 // move item to the other group
                 var index = this.items.indexOf(item);
-                this.changeItem(index, {'groupId': group.id});
+                this.changeItem(index, {'groupId': group.id, 'groupLabel': group.label});
             }
             else {
                 this.repaintDeleteButton();
@@ -3062,7 +3063,8 @@ links.Timeline.prototype.onDblClick = function (event) {
                 'start': xstart,
                 'end': xend,
                 'content': content,
-                'groupId': group.id
+                'groupId': group.id,
+                'groupLabel': group.label
             }, preventRender);
             params.itemIndex = (this.items.length - 1);
             this.selectItem(params.itemIndex);
