@@ -2051,7 +2051,7 @@ links.Timeline.prototype.repaintDeleteButton = function () {
     if (!deleteButton) {
         // create a delete button
         deleteButton = document.createElement("DIV");
-        deleteButton.className = "timeline-navigation-delete icon-trash";
+        deleteButton.className = "timeline-navigation-delete fa fa-trash-o icon-trash";
         deleteButton.style.position = "absolute";
 
         frame.appendChild(deleteButton);
@@ -2062,7 +2062,7 @@ links.Timeline.prototype.repaintDeleteButton = function () {
     if (!editButton) {
         // create a delete button
         editButton = document.createElement("DIV");
-        editButton.className = "timeline-navigation-edit icon-cog";
+        editButton.className = "timeline-navigation-edit fa fa-cog icon-cog";
         editButton.style.position = "absolute";
 
         frame.appendChild(editButton);
