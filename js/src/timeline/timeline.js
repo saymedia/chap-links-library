@@ -1018,17 +1018,29 @@ links.Timeline.prototype.repaintAxis = function() {
 
     if (!axis.frame) {
         axis.frame = document.createElement("DIV");
+        axis.frame.className = "timeline-axis-frame-header";
         axis.frame.style.position = "absolute";
         axis.frame.style.left = "0px";
         axis.frame.style.top = "0px";
         dom.content.appendChild(axis.frame);
     }
+    if (!axis.lineFrame) {
+        axis.lineFrame = document.createElement("DIV");
+        axis.lineFrame.className = "timeline-axis-frame-lines";
+        axis.lineFrame.style.position = "absolute";
+        axis.lineFrame.style.left = "0px";
+        axis.lineFrame.style.top = "0px";
+        dom.content.appendChild(axis.lineFrame);
+    }
 
     // take axis offline
     dom.content.removeChild(axis.frame);
+    dom.content.removeChild(axis.lineFrame);
 
     axis.frame.style.width = (size.contentWidth) + "px";
     axis.frame.style.height = (size.axis.height) + "px";
+    axis.lineFrame.style.width = (size.contentWidth) + "px";
+    axis.lineFrame.style.height = (size.axis.height) + "px";
 
     // the drawn axis is more wide than the actual visual part, such that
     // the axis can be dragged without having to redraw it each time again.
@@ -1099,6 +1111,7 @@ links.Timeline.prototype.repaintAxis = function() {
 
     // put axis online
     dom.content.insertBefore(axis.frame, dom.content.firstChild);
+    dom.content.insertBefore(axis.lineFrame, dom.content.firstChild);
 
     return needsReflow;
 };
@@ -1226,7 +1239,7 @@ links.Timeline.prototype.repaintAxisHorizontal = function() {
             backgroundLine.style.left = "0px";
             backgroundLine.style.width = "100%";
             backgroundLine.style.border = "none";
-            axis.frame.insertBefore(backgroundLine, axis.frame.firstChild);
+            axis.lineFrame.insertBefore(backgroundLine, axis.lineFrame.firstChild);
 
             axis.backgroundLine = backgroundLine;
         }
@@ -1238,7 +1251,7 @@ links.Timeline.prototype.repaintAxisHorizontal = function() {
     }
     else {
         if (axis.backgroundLine) {
-            axis.frame.removeChild(axis.backgroundLine);
+            axis.lineFrame.removeChild(axis.backgroundLine);
             delete axis.backgroundLine;
         }
     }
@@ -1247,8 +1260,8 @@ links.Timeline.prototype.repaintAxisHorizontal = function() {
     if (hasAxis) {
         if (axis.line) {
             // put this line at the end of all childs
-            var line = axis.frame.removeChild(axis.line);
-            axis.frame.appendChild(line);
+            var line = axis.lineFrame.removeChild(axis.line);
+            axis.lineFrame.appendChild(line);
         }
         else {
             // make the axis line
@@ -1258,7 +1271,7 @@ links.Timeline.prototype.repaintAxisHorizontal = function() {
             line.style.left = "0px";
             line.style.width = "100%";
             line.style.height = "0px";
-            axis.frame.appendChild(line);
+            axis.lineFrame.appendChild(line);
 
             axis.line = line;
         }
@@ -1267,7 +1280,7 @@ links.Timeline.prototype.repaintAxisHorizontal = function() {
     }
     else {
         if (axis.line && axis.line.parentElement) {
-            axis.frame.removeChild(axis.line);
+            axis.lineFrame.removeChild(axis.line);
             delete axis.line;
         }
     }
@@ -1319,7 +1332,7 @@ links.Timeline.prototype.repaintAxisMinorLine = function (x) {
     var axis = this.size.axis,
         dom = this.dom,
         props = axis.properties,
-        frame = dom.axis.frame,
+        frame = dom.axis.lineFrame,
         minorLines = dom.axis.minorLines,
         index = props.minorLineNum,
         line;
@@ -1390,7 +1403,7 @@ links.Timeline.prototype.repaintAxisMajorLine = function (x) {
     var size = this.size,
         props = size.axis.properties,
         axis = this.size.axis,
-        frame = this.dom.axis.frame,
+        frame = this.dom.axis.lineFrame,
         majorLines = this.dom.axis.majorLines,
         index = props.majorLineNum,
         line;
