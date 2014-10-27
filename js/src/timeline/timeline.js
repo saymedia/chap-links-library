@@ -1184,6 +1184,7 @@ links.Timeline.prototype.repaintAxisEndOverwriting = function () {
     var dom = this.dom,
         props = this.size.axis.properties,
         frame = this.dom.axis.frame,
+        lineFrame = this.dom.axis.lineFrame,
         num;
 
     // remove leftovers
@@ -1199,7 +1200,7 @@ links.Timeline.prototype.repaintAxisEndOverwriting = function () {
     num = props.minorLineNum;
     while (minorLines.length > num) {
         var minorLine = minorLines[num];
-        frame.removeChild(minorLine);
+        lineFrame.removeChild(minorLine);
         minorLines.splice(num, 1);
     }
 
@@ -1215,7 +1216,7 @@ links.Timeline.prototype.repaintAxisEndOverwriting = function () {
     num = props.majorLineNum;
     while (majorLines.length > num) {
         var majorLine = majorLines[num];
-        frame.removeChild(majorLine);
+        lineFrame.removeChild(majorLine);
         majorLines.splice(num, 1);
     }
 };
